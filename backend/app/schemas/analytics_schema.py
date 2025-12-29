@@ -30,6 +30,11 @@ class CodebaseListItem(BaseModel):
     current_sloc: int
     last_commit_date: datetime | None
     analytics_status: str  # "complete" | "failed" | "none"
+    # Additional fields for frontend Analytics table
+    total_contributors: int = 0
+    total_branches: int = 0
+    primary_language: str | None = None
+    total_churn: int = 0  # total_additions_lines + total_deletions_lines
 
 
 class CodebasesListResponse(BaseModel):
@@ -61,6 +66,7 @@ class AnalyticsOverview(BaseModel):
     total_lines: int  # Current codebase size in lines
     total_additions_lines: int  # Total lines added over time (churn)
     total_deletions_lines: int  # Total lines deleted over time (churn)
+    total_churn: int  # total_additions_lines + total_deletions_lines
     # Byte-based SLOC metrics
     total_sloc: int  # Churn-based SLOC (additions + deletions in bytes / 50)
     net_sloc: int  # Net SLOC (current codebase size)
