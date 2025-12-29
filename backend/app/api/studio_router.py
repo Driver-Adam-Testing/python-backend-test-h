@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.api.routes.legacy.schema import graphql_router, sandbox_router
 from app.api.routes.v1 import (
     admin_sources,
+    analytics,
     codebase,
     content,
     git_provider,
@@ -62,6 +63,9 @@ studio_router.include_router(
 studio_router.include_router(
     source_teams.router, tags=["source-teams"]
 )  # Source teams routes (no prefix, uses /sources/{id}/teams)
+studio_router.include_router(
+    analytics.router, tags=["analytics"]
+)  # Analytics routes (no prefix, uses /analytics/* and /codebases/{id}/analytics/*)
 studio_router.include_router(upload.router, prefix="/upload", tags=["upload"])
 studio_router.include_router(usage.router, prefix="/usage", tags=["usage"])
 studio_router.include_router(user.router, prefix="/user", tags=["user"])
