@@ -4,16 +4,23 @@ Shared fixtures and utilities for analytics tests.
 Adapted from GitStats test suite patterns.
 """
 
+import sys
+from pathlib import Path
+
+# Add src directory to Python path for imports
+_src_path = Path(__file__).resolve().parent.parent.parent / "src"
+if str(_src_path) not in sys.path:
+    sys.path.insert(0, str(_src_path))
+
 import tempfile
 from datetime import datetime, date, timezone
-from pathlib import Path
 from typing import Optional
 
 import pytest
 import pygit2
 
-from src.storage.hot_storage import HotStorage
-from src.storage.parquet_storage import ParquetStorage
+from analytics.storage.hot_storage import HotStorage
+from analytics.storage.parquet_storage import ParquetStorage
 
 
 # ============================================================================
@@ -380,7 +387,7 @@ def populated_storage(all_storage):
     - 200 file changes
     - Aggregates built
     """
-    from src.aggregation.engine import AggregationEngine
+    from analytics.aggregation.engine import AggregationEngine
 
     hot = all_storage['hot']
     warm = all_storage['warm']

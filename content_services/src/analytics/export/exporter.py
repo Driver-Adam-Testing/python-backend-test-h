@@ -3,8 +3,8 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from src.storage.hot_storage import HotStorage
-from src.storage.parquet_storage import ParquetStorage
+from analytics.storage.hot_storage import HotStorage
+from analytics.storage.parquet_storage import ParquetStorage
 from .schemas import (
     OverviewJSON, BranchesJSON, ActivityJSON, OwnershipJSON,
     MetadataJSON, BranchEntry, ActivityEntry,

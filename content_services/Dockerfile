@@ -20,7 +20,6 @@ WORKDIR /app
 COPY driver_db /driver_db
 COPY packages /packages
 COPY content_services /app
-COPY content_services/analytics /app/analytics
 COPY backend/scripts/ /app/scripts/
 COPY content_services/src/inspector/uctags-2024.10.02-linux-x86_64/bin/ctags /ctags
 
