@@ -10,8 +10,8 @@ from datetime import datetime
 from pathlib import Path
 import pandas as pd
 
-from src.storage.hot_storage import HotStorage
-from src.storage.parquet_storage import ParquetStorage
+from analytics.storage.hot_storage import HotStorage
+from analytics.storage.parquet_storage import ParquetStorage
 
 logger = logging.getLogger(__name__)
 
