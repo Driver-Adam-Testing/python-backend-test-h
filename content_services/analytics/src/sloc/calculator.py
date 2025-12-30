@@ -14,17 +14,12 @@ from dataclasses import dataclass
 BYTES_PER_LINE = 50
 
 
-class CalculationError(Exception):
-    """Base exception for SLOC calculation errors."""
-    pass
-
-
-class BinaryFileError(CalculationError):
+class BinaryFileError(Exception):
     """Raised when attempting to calculate SLOC for binary files."""
     pass
 
 
-class InvalidEncodingError(CalculationError):
+class InvalidEncodingError(Exception):
     """Raised when patch contains invalid UTF-8."""
     pass
 
