@@ -188,28 +188,29 @@ def _extract_commit_data(
         total_deletion_bytes = 0
 
         if diff:
-            for delta in diff.deltas:
-                files_changed += 1
+            # Use diff.stats for line counts (most reliable)
+            stats = diff.stats
+            files_changed = stats.files_changed
+            total_additions = stats.insertions
+            total_deletions = stats.deletions
+            
+            # Calculate bytes from patch content if requested
+            if include_patches:
                 try:
-                    patch = diff.patch_from_delta(delta)
-                    if patch:
-                        for hunk in patch.hunks:
-                            for line in hunk.lines:
-                                if line.origin == '+':
-                                    total_additions += 1
-                                    if include_patches:
-                                        total_addition_bytes += len(line.content.encode('utf-8', errors='replace'))
-                                elif line.origin == '-':
-                                    total_deletions += 1
-                                    if include_patches:
-                                        total_deletion_bytes += len(line.content.encode('utf-8', errors='replace'))
+                    patch_text = diff.patch
+                    if patch_text:
+                        for line in patch_text.split('\n'):
+                            if line.startswith('+') and not line.startswith('+++'):
+                                total_addition_bytes += len(line[1:].encode('utf-8', errors='replace'))
+                            elif line.startswith('-') and not line.startswith('---'):
+                                total_deletion_bytes += len(line[1:].encode('utf-8', errors='replace'))
                 except Exception:
-                    pass
-
-        # If no patch analysis, estimate bytes
-        if not include_patches:
-            total_addition_bytes = total_additions * 50
-            total_deletion_bytes = total_deletions * 50
+                    # Fall back to estimate
+                    total_addition_bytes = total_additions * 50
+                    total_deletion_bytes = total_deletions * 50
+            else:
+                total_addition_bytes = total_additions * 50
+                total_deletion_bytes = total_deletions * 50
 
         # Calculate derived metrics
         net_lines = total_additions - total_deletions
