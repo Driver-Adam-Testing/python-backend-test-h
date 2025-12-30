@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "analytics"
+version = "0.1.0"
+description = "Git repository analytics for Driver"
+authors = ["Driver AI"]
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+
+# Core data processing
+duckdb = "^1.1.0"
+pyarrow = "^18.0.0"
+pandas = "^2.0.0"
+pydantic = "^2.0.0"
+
+# Git operations
+pygit2 = "^1.15.0"
+
+# Local packages
+shared = {path = "../../packages/shared", develop = true}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.0"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: marks tests as integration tests",
+    "performance: marks tests as performance tests",
+]
+asyncio_mode = "auto"
+

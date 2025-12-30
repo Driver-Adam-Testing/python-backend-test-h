@@ -1,0 +1,15 @@
+"""Schema definitions module."""
+from .hot_schemas import ALL_HOT_SCHEMAS, HOT_SCHEMA_VERSION
+from .warm_schemas import COMMITS_SCHEMA, CONTRIBUTORS_SCHEMA, WARM_SCHEMA_VERSION
+from .cold_schemas import FILE_CHANGES_SCHEMA, COLD_SCHEMA_VERSION
+
+__all__ = [
+    "ALL_HOT_SCHEMAS",
+    "HOT_SCHEMA_VERSION",
+    "COMMITS_SCHEMA",
+    "CONTRIBUTORS_SCHEMA",
+    "WARM_SCHEMA_VERSION",
+    "FILE_CHANGES_SCHEMA",
+    "COLD_SCHEMA_VERSION",
+]
+
