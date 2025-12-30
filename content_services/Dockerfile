@@ -5,8 +5,9 @@ ENV PYTHONUNBUFFERED=1 \
  HATCHET_ENV=production
 
 # Install system dependencies and Poetry
+# libgit2-dev is required for pygit2 (analytics service)
 RUN apt-get update && \
- apt-get install -y curl nano ripgrep ghostscript git && \
+ apt-get install -y curl nano ripgrep ghostscript git libgit2-dev && \
  curl -sSL https://install.python-poetry.org | python3 - && \
  ln -s /root/.local/bin/poetry /usr/local/bin/poetry && \
  apt-get clean && \
@@ -19,6 +20,7 @@ WORKDIR /app
 COPY driver_db /driver_db
 COPY packages /packages
 COPY content_services /app
+COPY content_services/analytics /app/analytics
 COPY backend/scripts/ /app/scripts/
 COPY content_services/src/inspector/uctags-2024.10.02-linux-x86_64/bin/ctags /ctags
 
