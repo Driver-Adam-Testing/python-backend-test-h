@@ -83,6 +83,47 @@ class TestPipelinePhases:
         assert result.total_commits == 6  # 1 initial + 5 more
         assert len(result.commits) >= 6  # May have duplicates per branch
 
+    def test_extract_commits_sloc_metrics(self, test_repo):
+        """Test that SLOC metrics are correctly calculated from diffs.
+        
+        This test verifies that the extract phase correctly parses git diffs
+        and populates line/byte metrics. It was added after a bug where
+        diff.patch_from_delta() (non-existent) was used instead of diff.stats.
+        """
+        repo_path, repo = test_repo
+        
+        result = extract_commits(
+            repo=repo,
+            codebase_id="test-uuid",
+            include_patches=True
+        )
+        
+        assert result.success
+        
+        # Get non-initial commits (ones with parents that have diffs)
+        non_initial = [c for c in result.commits if c['parent_count'] > 0]
+        assert len(non_initial) >= 5, "Should have at least 5 non-initial commits"
+        
+        # Verify SLOC metrics are populated (non-zero) for commits with changes
+        commits_with_metrics = 0
+        for commit in non_initial:
+            # Each commit adds a file with 2 lines: "# File N\nprint('hello N')\n"
+            if commit['additions_lines'] > 0:
+                commits_with_metrics += 1
+                # Verify byte metrics are also populated
+                assert commit['addition_bytes'] > 0, \
+                    f"Commit {commit['commit_sha'][:8]} has additions_lines={commit['additions_lines']} but addition_bytes=0"
+                # Verify derived metrics are consistent
+                assert commit['churn_lines'] >= commit['additions_lines'], \
+                    f"churn_lines should be >= additions_lines"
+                assert commit['files_changed'] >= 1, \
+                    f"files_changed should be >= 1 for commits with additions"
+        
+        # At least some commits should have metrics (not all zeros)
+        assert commits_with_metrics >= 3, \
+            f"Expected at least 3 commits with SLOC metrics, got {commits_with_metrics}. " \
+            f"This may indicate diff parsing is broken."
+
     def test_discover_branches(self, test_repo):
         """Test discovering branches."""
         repo_path, repo = test_repo
