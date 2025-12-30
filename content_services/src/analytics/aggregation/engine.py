@@ -43,13 +43,21 @@ class AggregationEngine:
         self.cold = cold_storage if cold_storage else warm_storage
         logger.info("Initialized AggregationEngine")
 
-    def build_all_aggregates(self, codebase_id: str, force_rebuild: bool = False) -> dict:
+    def build_all_aggregates(
+        self,
+        codebase_id: str,
+        force_rebuild: bool = False,
+        repo_owner: str | None = None,
+        repo_name: str | None = None
+    ) -> dict:
         """
         Build all aggregates for a repository.
 
         Args:
             codebase_id: Repository identifier
             force_rebuild: Force full rebuild even if aggregates exist
+            repo_owner: Repository owner (e.g., 'lodash')
+            repo_name: Repository name (e.g., 'lodash')
 
         Returns:
             Dictionary with aggregation statistics
@@ -58,6 +66,10 @@ class AggregationEngine:
             ValueError: If no commit data found for repository
         """
         logger.info(f"Building all aggregates for repo {codebase_id} (force_rebuild={force_rebuild})")
+        
+        # Store repo metadata for use in aggregates
+        self._repo_owner = repo_owner
+        self._repo_name = repo_name
 
         # Check if aggregates exist
         if not force_rebuild and self._aggregates_exist(codebase_id):
@@ -243,12 +255,17 @@ class AggregationEngine:
         # Default branch (most common branch)
         default_branch = commits_df['branch_name'].mode()[0] if not commits_df.empty else 'main'
 
+        # Determine repository name from stored metadata or use fallback
+        repo_name = getattr(self, '_repo_name', None) or f'repo_{codebase_id[:8]}'
+        repo_owner = getattr(self, '_repo_owner', None) or 'owner'
+        full_name = f'{repo_owner}/{repo_name}'
+
         # Store aggregate (convert numpy types to Python types)
         metrics = {
             'codebase_id': codebase_id,
-            'repository_name': f'repo_{codebase_id[:8]}',
-            'full_name': f'owner/repo_{codebase_id[:8]}',
-            'owner': 'owner',
+            'repository_name': repo_name,
+            'full_name': full_name,
+            'owner': repo_owner,
             'total_lines': int(total_lines),
             'total_additions_lines': int(total_additions_lines),
             'total_deletions_lines': int(total_deletions_lines),
