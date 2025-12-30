@@ -5,55 +5,7 @@ All models use Pydantic for validation and serialization.
 """
 from datetime import datetime
 
-from pydantic import BaseModel, Field
-
-
-class RepositoryMetadata(BaseModel):
-    """Repository metadata."""
-
-    # Identifiers
-    codebase_id: str  # UUID string
-    repository_name: str
-    owner: str
-    full_name: str
-
-    # Basic metadata
-    created_at: datetime
-    updated_at: datetime
-    pushed_at: datetime | None
-    default_branch: str
-
-    # Repository characteristics
-    primary_language: str | None
-    languages: dict[str, int]  # language -> bytes
-    size_kb: int
-
-    # Status flags
-    is_fork: bool
-    is_archived: bool
-
-    # Collection metadata
-    collected_at: datetime
-    collection_version: str = "1.0"
-
-
-class FileChange(BaseModel):
-    """File-level changes within a commit."""
-
-    filename: str
-    status: str  # "added", "deleted", "modified", "renamed"
-    additions: int
-    deletions: int
-    changes: int
-    previous_filename: str | None = None  # For renamed files
-
-    # SLOC fields
-    patch: str | None = None  # Raw git diff patch
-    addition_bytes: int = 0  # UTF-8 bytes added
-    deletion_bytes: int = 0  # UTF-8 bytes deleted
-    patch_bytes: int = 0  # Total bytes (addition_bytes + deletion_bytes)
-    net_bytes: int = 0  # Net byte change (addition_bytes - deletion_bytes)
-    file_sloc: int = 0  # SLOC for this file (patch_bytes / 50)
+from pydantic import BaseModel
 
 
 class CommitRecord(BaseModel):
@@ -211,21 +163,4 @@ class ContributorRecord(BaseModel):
 
     # Collection metadata
     collected_at: datetime
-
-
-class IngestionSummary(BaseModel):
-    """Summary of completed ingestion."""
-
-    # Repository
-    codebase_id: str  # UUID string
-    repository_name: str
-
-    # Statistics
-    total_commits: int
-    total_contributors: int
-    first_commit_at: datetime
-    last_commit_at: datetime
-
-    # Optional branch info
-    branches: int = 0
 
