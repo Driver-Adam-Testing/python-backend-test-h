@@ -22,6 +22,7 @@ from workflows.inspector_functions import (
     toplevel_doc_task,
 )
 from workflows.inspector_workflow import inspector_task
+from workflows.analytics_workflow import analytics_task
 from workflows.onboarding_workflows import (
     connect_repos_for_installation_task,
     handle_azure_devops_events_task,
@@ -44,6 +45,7 @@ except ImportError:
 heavy_workflow_set = [
     pdf_processing_task,
     inspector_task,
+    analytics_task,
     tech_doc_task,
     folder_doc_task,
     symbol_doc_task,
