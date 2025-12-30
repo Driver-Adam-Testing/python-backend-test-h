@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Any
 import shutil
 
 import pandas as pd
@@ -12,7 +11,6 @@ import pyarrow.parquet as pq
 from src.schemas.warm_schemas import (
     COMMITS_SCHEMA,
     CONTRIBUTORS_SCHEMA,
-    BRANCH_SNAPSHOTS_SCHEMA,
 )
 from src.schemas.cold_schemas import FILE_CHANGES_SCHEMA
 
@@ -165,30 +163,6 @@ class ParquetStorage:
             logger.error(f"Failed to write contributors: {e}")
             raise
 
-    # Write operations - Branch Snapshots
-    def write_branch_snapshots(self, codebase_id: str, snapshots: list[dict]) -> None:
-        """Write branch snapshots to Parquet.
-
-        Args:
-            codebase_id: Repository ID
-            snapshots: List of branch snapshot dictionaries
-        """
-        if not snapshots:
-            logger.debug("No branch snapshots to write")
-            return
-
-        logger.info(f"Writing {len(snapshots)} branch snapshots for repo {codebase_id}")
-        path = self._get_path('warm', 'branch_snapshots', codebase_id)
-        path.parent.mkdir(parents=True, exist_ok=True)
-
-        try:
-            table = pa.Table.from_pylist(snapshots, schema=BRANCH_SNAPSHOTS_SCHEMA)
-            pq.write_table(table, path, compression='snappy', write_statistics=True)
-            logger.info(f"Successfully wrote branch snapshots for repo {codebase_id}")
-        except Exception as e:
-            logger.error(f"Failed to write branch snapshots: {e}")
-            raise
-
     # Write operations - File Changes (Cold Layer)
     def write_file_changes(
         self, codebase_id: str, file_changes: list[dict], partition_by_date: bool = True
@@ -308,40 +282,6 @@ class ParquetStorage:
             return df
         except Exception as e:
             logger.error(f"Failed to read contributors: {e}")
-            raise
-
-    # Read operations - Branch Snapshots
-    def read_branch_snapshots(
-        self, codebase_id: str, branch_name: str = None, columns: list[str] = None
-    ) -> pd.DataFrame:
-        """Read branch snapshots from Parquet.
-
-        Args:
-            codebase_id: Repository ID
-            branch_name: Optional filter for specific branch
-            columns: Columns to read (None = all)
-
-        Returns:
-            DataFrame of branch snapshots
-        """
-        path = self._get_path('warm', 'branch_snapshots', codebase_id)
-        if not path.exists():
-            logger.debug(f"No branch snapshots file found for repo {codebase_id}")
-            return pd.DataFrame()
-
-        logger.debug(f"Reading branch snapshots for repo {codebase_id} (branch={branch_name})")
-
-        filters = None
-        if branch_name:
-            filters = [('branch_name', '=', branch_name)]
-
-        try:
-            table = pq.read_table(path, columns=columns, filters=filters)
-            df = table.to_pandas()
-            logger.info(f"Read {len(df)} branch snapshots for repo {codebase_id}")
-            return df
-        except Exception as e:
-            logger.error(f"Failed to read branch snapshots: {e}")
             raise
 
     # Read operations - File Changes

@@ -2,8 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Any
-
 import duckdb
 
 from src.schemas.hot_schemas import ALL_HOT_SCHEMAS
