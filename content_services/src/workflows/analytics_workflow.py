@@ -51,10 +51,7 @@ async def analytics_task(input: AnalyticsInput, ctx: Context) -> dict[str, str]:
     Returns:
         Dictionary with status and metrics
     """
-    # Import from analytics service (installed as package in content_services)
-    import sys
-    sys.path.insert(0, "/app/analytics")
-    from src.pipeline.orchestrator import (
+    from analytics.pipeline.orchestrator import (
         AnalyticsPipeline,
         PipelineConfig,
         PipelineInput
