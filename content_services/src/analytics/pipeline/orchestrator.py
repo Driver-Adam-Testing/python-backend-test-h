@@ -23,6 +23,8 @@ from analytics.storage.parquet_storage import ParquetStorage
 from analytics.aggregation.engine import AggregationEngine
 from analytics.export.exporter import DriverJSONExporter
 
+from shared.file_storage.aws_s3_client import AWSS3Client, org_id_to_hash
+
 from .phases.clone import clone_repository, open_repository, cleanup_repository, CloneResult
 from .phases.extract import extract_commits, ExtractResult
 from .phases.branches import discover_branches, BranchesResult
@@ -141,6 +143,9 @@ class AnalyticsPipeline:
 
             # Phase 6: Export to JSON
             json_files = self._phase_export(ctx)
+
+            # Phase 7: Upload to S3
+            self._phase_upload(ctx, json_files)
 
             # Calculate duration
             duration = (datetime.now(timezone.utc) - ctx.start_time).total_seconds()
@@ -316,6 +321,43 @@ class AnalyticsPipeline:
 
         logger.info(f"Exported {len(json_files)} JSON files to {output_dir}")
         return json_files
+
+    def _phase_upload(self, ctx: PipelineContext, json_files: list[Path]) -> None:
+        """Phase 7: Upload JSON files to S3."""
+        logger.info("Phase 7: Uploading to S3...")
+
+        if not json_files:
+            logger.warning("No JSON files to upload")
+            return
+
+        # Get the S3 bucket for this organization
+        bucket = org_id_to_hash(ctx.input.organization_id)
+        s3_client = AWSS3Client()
+
+        uploaded = 0
+        for json_file in json_files:
+            if not json_file.exists():
+                logger.warning(f"JSON file not found: {json_file}")
+                continue
+
+            # Upload key: analytics/{codebase_id}/{filename}
+            upload_key = f"analytics/{ctx.input.codebase_id}/{json_file.name}"
+
+            try:
+                s3_client.upload_file_to_s3(
+                    file_path=json_file,
+                    bucket=bucket,
+                    upload_key=upload_key,
+                    metadata={"codebase_id": ctx.input.codebase_id},
+                    content_type="application/json"
+                )
+                uploaded += 1
+                logger.info(f"Uploaded {json_file.name} to s3://{bucket}/{upload_key}")
+            except Exception as e:
+                logger.error(f"Failed to upload {json_file.name}: {e}")
+                raise RuntimeError(f"S3 upload failed for {json_file.name}: {e}")
+
+        logger.info(f"Uploaded {uploaded}/{len(json_files)} JSON files to S3")
 
     def _count_contributors(self, ctx: PipelineContext) -> int:
         """Count unique contributors from extracted commits."""
