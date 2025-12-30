@@ -8,11 +8,11 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from src.schemas.warm_schemas import (
+from analytics.schemas.warm_schemas import (
     COMMITS_SCHEMA,
     CONTRIBUTORS_SCHEMA,
 )
-from src.schemas.cold_schemas import FILE_CHANGES_SCHEMA
+from analytics.schemas.cold_schemas import FILE_CHANGES_SCHEMA
 
 logger = logging.getLogger(__name__)
 

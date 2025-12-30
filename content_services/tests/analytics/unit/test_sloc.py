@@ -1,6 +1,6 @@
 """Unit tests for SLOC calculator."""
 import pytest
-from src.sloc.calculator import (
+from analytics.sloc.calculator import (
     DualSLOCCalculator,
     SLOCMetrics,
     bytes_to_sloc,
