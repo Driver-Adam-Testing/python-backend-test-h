@@ -8,7 +8,6 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Any
 
 import pygit2
 

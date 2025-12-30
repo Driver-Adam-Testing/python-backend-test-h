@@ -8,8 +8,6 @@ into pre-computed metrics in hot storage (DuckDB) for sub-10ms query performance
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Any
-
 import pandas as pd
 
 from src.storage.hot_storage import HotStorage

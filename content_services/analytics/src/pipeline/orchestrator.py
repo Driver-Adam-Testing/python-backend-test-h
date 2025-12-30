@@ -15,8 +15,6 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
-
 import pygit2
 from pydantic import BaseModel
 
@@ -27,7 +25,7 @@ from src.export.exporter import DriverJSONExporter
 
 from .phases.clone import clone_repository, open_repository, cleanup_repository, CloneResult
 from .phases.extract import extract_commits, ExtractResult
-from .phases.branches import discover_branches, BranchesResult, branch_info_to_dict
+from .phases.branches import discover_branches, BranchesResult
 
 logger = logging.getLogger(__name__)
 
