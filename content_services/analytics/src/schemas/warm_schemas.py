@@ -101,29 +101,3 @@ CONTRIBUTORS_SCHEMA = pa.schema([
     pa.field("collected_at", pa.timestamp("us", tz="UTC"), nullable=False)
 ])
 
-# Branch snapshots schema
-BRANCH_SNAPSHOTS_SCHEMA = pa.schema([
-    pa.field("snapshot_id", pa.string(), nullable=False),
-    pa.field("codebase_id", pa.string(), nullable=False),
-    pa.field("branch_name", pa.string(), nullable=False),
-    pa.field("snapshot_date", pa.date32(), nullable=False),
-    pa.field("snapshot_type", pa.string(), nullable=False),  # scheduled/pre_rebase/post_rebase
-    pa.field("branch_sha", pa.string(), nullable=True),  # HEAD at snapshot time
-    pa.field("divergence_point_sha", pa.string(), nullable=True),
-
-    # Unique metrics (commits unique to this branch)
-    pa.field("unique_commits", pa.int32(), nullable=False),
-    pa.field("unique_lines", pa.int64(), nullable=False),
-    pa.field("unique_sloc", pa.int64(), nullable=False),
-    pa.field("unique_addition_bytes", pa.int64(), nullable=False),
-    pa.field("unique_contributors", pa.int32(), nullable=False),
-
-    # Total metrics (all reachable commits)
-    pa.field("total_commits", pa.int32(), nullable=False),
-    pa.field("total_lines", pa.int64(), nullable=False),
-    pa.field("total_sloc", pa.int64(), nullable=False),
-    pa.field("total_addition_bytes", pa.int64(), nullable=False),
-    pa.field("total_deletion_bytes", pa.int64(), nullable=False),
-    pa.field("total_contributors", pa.int32(), nullable=False),
-])
-
