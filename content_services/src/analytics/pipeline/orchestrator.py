@@ -18,10 +18,10 @@ from pathlib import Path
 import pygit2
 from pydantic import BaseModel
 
-from src.storage.hot_storage import HotStorage
-from src.storage.parquet_storage import ParquetStorage
-from src.aggregation.engine import AggregationEngine
-from src.export.exporter import DriverJSONExporter
+from analytics.storage.hot_storage import HotStorage
+from analytics.storage.parquet_storage import ParquetStorage
+from analytics.aggregation.engine import AggregationEngine
+from analytics.export.exporter import DriverJSONExporter
 
 from .phases.clone import clone_repository, open_repository, cleanup_repository, CloneResult
 from .phases.extract import extract_commits, ExtractResult
