@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 import duckdb
 
-from src.schemas.hot_schemas import ALL_HOT_SCHEMAS
+from analytics.schemas.hot_schemas import ALL_HOT_SCHEMAS
 
 logger = logging.getLogger(__name__)
 

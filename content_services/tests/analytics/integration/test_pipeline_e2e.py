@@ -5,15 +5,15 @@ from pathlib import Path
 import pytest
 import pygit2
 
-from src.pipeline.orchestrator import (
+from analytics.pipeline.orchestrator import (
     AnalyticsPipeline,
     PipelineConfig,
     PipelineInput,
     PipelineOutput,
 )
-from src.pipeline.phases.clone import open_repository
-from src.pipeline.phases.extract import extract_commits
-from src.pipeline.phases.branches import discover_branches
+from analytics.pipeline.phases.clone import open_repository
+from analytics.pipeline.phases.extract import extract_commits
+from analytics.pipeline.phases.branches import discover_branches
 
 
 class TestPipelinePhases:
