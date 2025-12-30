@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pygit2
 
-from src.sloc.calculator import DualSLOCCalculator, SLOCMetrics
+from analytics.sloc.calculator import DualSLOCCalculator, SLOCMetrics
 
 logger = logging.getLogger(__name__)
 
