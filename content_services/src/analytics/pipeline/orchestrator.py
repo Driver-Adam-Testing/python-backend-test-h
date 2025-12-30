@@ -147,6 +147,9 @@ class AnalyticsPipeline:
             # Phase 7: Upload to S3
             self._phase_upload(ctx, json_files)
 
+            # Phase 8: Update org-level files
+            self._phase_update_org_files(ctx)
+
             # Calculate duration
             duration = (datetime.now(timezone.utc) - ctx.start_time).total_seconds()
 
@@ -292,8 +295,13 @@ class AnalyticsPipeline:
 
         engine = AggregationEngine(ctx.hot_storage, ctx.warm_storage, ctx.cold_storage)
 
-        # Build all aggregates
-        engine.build_all_aggregates(ctx.input.codebase_id, force_rebuild=True)
+        # Build all aggregates with repository metadata
+        engine.build_all_aggregates(
+            ctx.input.codebase_id,
+            force_rebuild=True,
+            repo_owner=ctx.input.repo_owner,
+            repo_name=ctx.input.repo_name
+        )
 
         # Refresh branch metrics
         engine.refresh_branch_metrics(ctx.input.codebase_id)
@@ -358,6 +366,162 @@ class AnalyticsPipeline:
                 raise RuntimeError(f"S3 upload failed for {json_file.name}: {e}")
 
         logger.info(f"Uploaded {uploaded}/{len(json_files)} JSON files to S3")
+
+    def _phase_update_org_files(self, ctx: PipelineContext) -> None:
+        """Phase 8: Update organization-level summary files."""
+        logger.info("Phase 8: Updating org-level files...")
+
+        import json
+        import tempfile
+
+        bucket = org_id_to_hash(ctx.input.organization_id)
+        s3_client = AWSS3Client()
+
+        # Get current codebase metrics from hot storage
+        metrics = ctx.hot_storage.get_repository_metrics(ctx.input.codebase_id)
+        if not metrics:
+            logger.warning("No metrics found for codebase, skipping org file update")
+            return
+
+        # Build codebase entry for the list
+        total_addition_bytes = metrics.get('total_addition_bytes', 0)
+        total_deletion_bytes = metrics.get('total_deletion_bytes', 0)
+        net_sloc = (total_addition_bytes - total_deletion_bytes) // 50
+
+        new_codebase_entry = {
+            "codebase_id": ctx.input.codebase_id,
+            "display_name": metrics.get('full_name', f"{ctx.input.repo_owner}/{ctx.input.repo_name}"),
+            "full_name": metrics.get('full_name', f"{ctx.input.repo_owner}/{ctx.input.repo_name}"),
+            "owner": ctx.input.repo_owner,
+            "repository_name": ctx.input.repo_name,
+            "total_commits": metrics.get('total_commits', 0),
+            "total_contributors": metrics.get('total_contributors', 0),
+            "total_branches": metrics.get('total_branches', 0),
+            "total_churn": metrics.get('total_additions_lines', 0) + metrics.get('total_deletions_lines', 0),
+            "current_sloc": net_sloc,
+            "net_sloc": net_sloc,
+            "primary_language": metrics.get('primary_language'),
+            "last_commit_date": metrics.get('last_commit_at').isoformat() if metrics.get('last_commit_at') else None,
+            "has_analytics": True
+        }
+
+        # Update codebases_list.json
+        try:
+            self._update_codebases_list(s3_client, bucket, new_codebase_entry)
+            logger.info("Updated codebases_list.json")
+        except Exception as e:
+            logger.error(f"Failed to update codebases_list.json: {e}")
+
+        # Update org_summary.json
+        try:
+            self._update_org_summary(s3_client, bucket, new_codebase_entry)
+            logger.info("Updated org_summary.json")
+        except Exception as e:
+            logger.error(f"Failed to update org_summary.json: {e}")
+
+    def _update_codebases_list(self, s3_client: AWSS3Client, bucket: str, new_entry: dict) -> None:
+        """Update codebases_list.json with new codebase entry."""
+        import json
+        import tempfile
+        import boto3
+
+        key = "analytics/codebases_list.json"
+        codebases = []
+
+        # Try to download existing file
+        try:
+            s3 = boto3.client("s3")
+            response = s3.get_object(Bucket=bucket, Key=key)
+            existing_data = json.loads(response['Body'].read().decode('utf-8'))
+            codebases = existing_data.get('codebases', [])
+        except Exception as e:
+            logger.info(f"No existing codebases_list.json, creating new: {e}")
+
+        # Update or add entry
+        updated = False
+        for i, cb in enumerate(codebases):
+            if cb.get('codebase_id') == new_entry['codebase_id']:
+                codebases[i] = new_entry
+                updated = True
+                break
+
+        if not updated:
+            codebases.append(new_entry)
+
+        # Write updated file
+        data = {
+            "organization_id": new_entry.get('codebase_id', '').split('-')[0] if '-' in new_entry.get('codebase_id', '') else '',
+            "codebases": codebases
+        }
+
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            json.dump(data, f, indent=2, default=str)
+            temp_path = Path(f.name)
+
+        s3_client.upload_file_to_s3(
+            file_path=temp_path,
+            bucket=bucket,
+            upload_key=key,
+            metadata=None,
+            content_type="application/json"
+        )
+
+        temp_path.unlink()
+
+    def _update_org_summary(self, s3_client: AWSS3Client, bucket: str, new_entry: dict) -> None:
+        """Update org_summary.json with aggregated totals."""
+        import json
+        import tempfile
+        import boto3
+        from datetime import datetime, timezone
+
+        key = "analytics/org_summary.json"
+
+        # First get the current codebases list to compute totals
+        codebases = []
+        try:
+            s3 = boto3.client("s3")
+            response = s3.get_object(Bucket=bucket, Key="analytics/codebases_list.json")
+            existing_data = json.loads(response['Body'].read().decode('utf-8'))
+            codebases = existing_data.get('codebases', [])
+        except Exception as e:
+            logger.info(f"Could not read codebases_list.json for summary: {e}")
+            codebases = [new_entry]
+
+        # Aggregate totals
+        total_codebases = len(codebases)
+        total_commits = sum(cb.get('total_commits', 0) for cb in codebases)
+        total_contributors = sum(cb.get('total_contributors', 0) for cb in codebases)
+        total_branches = sum(cb.get('total_branches', 0) for cb in codebases)
+        total_sloc = sum(cb.get('current_sloc', 0) for cb in codebases)
+        total_churn = sum(cb.get('total_churn', 0) for cb in codebases)
+
+        summary = {
+            "organization_id": new_entry.get('codebase_id', '').split('-')[0] if '-' in new_entry.get('codebase_id', '') else '',
+            "total_codebases": total_codebases,
+            "codebases_with_analytics": total_codebases,
+            "total_commits": total_commits,
+            "total_contributors": total_contributors,
+            "total_branches": total_branches,
+            "current_sloc": total_sloc,
+            "total_churn": total_churn,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            json.dump(summary, f, indent=2)
+            temp_path = Path(f.name)
+
+        s3_client.upload_file_to_s3(
+            file_path=temp_path,
+            bucket=bucket,
+            upload_key=key,
+            metadata=None,
+            content_type="application/json"
+        )
+
+        temp_path.unlink()
+        logger.info(f"Org summary updated: {total_codebases} codebases, {total_commits} commits")
 
     def _count_contributors(self, ctx: PipelineContext) -> int:
         """Count unique contributors from extracted commits."""
