@@ -9,7 +9,7 @@ readme = "README.md"
 python = ">=3.12,<3.13"
 alembic = "^1.12.1"
 sqlmodel = "^0.0.21"
-pydantic-settings = "^2.2.1"
+pydantic-settings = "^2.12.0"
 pgvector = "^0.2.5"
 
 #TODO: Remove strawberry-graphql from here when we migrate schemas or transition legacy.
