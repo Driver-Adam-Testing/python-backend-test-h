@@ -18,7 +18,7 @@ gunicorn = "^23.0.0"
 
 # Pin bcrypt until passlib supports the latest
 bcrypt = "4.0.1"
-pydantic-settings = "^2.2.1"
+pydantic-settings = "^2.12.0"
 database = { path = "../driver_db", develop = true }
 shared = { path = "../packages/shared", develop = true }
 strawberry-graphql = { extras = ["fastapi"], version = "^0.262.6" }
