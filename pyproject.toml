@@ -16,7 +16,7 @@ aws-cdk-aws-lambda-python-alpha = "2.227.0a0"
 toml = "^0.10.2"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.3"
+pytest = "^9.0.2"
 pytest-cov = "^4.1.0"
 mypy = "^1.8.0"
 pre-commit = "^3.6.2"
