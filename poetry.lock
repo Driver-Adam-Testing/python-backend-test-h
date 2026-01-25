@@ -169,20 +169,20 @@ typeguard = ">=2.13.3,<4.3.0"
 
 [[package]]
 name = "cdk-nag"
-version = "2.29.21"
+version = "2.37.55"
 description = "Check CDK v2 applications for best practices using a combination on available rule packs."
 optional = false
-python-versions = "~=3.8"
+python-versions = "~=3.9"
 groups = ["main"]
 files = [
-    {file = "cdk_nag-2.29.21-py3-none-any.whl", hash = "sha256:c705d6757ba4d181aaac0aaacbb9df4f3d9641e92b2b7cf4bed4d6ccabedc26e"},
-    {file = "cdk_nag-2.29.21.tar.gz", hash = "sha256:d0f403e8e40fd663d5e22f41048d454df00a4687db860b0c16986473ce798ef1"},
+    {file = "cdk_nag-2.37.55-py3-none-any.whl", hash = "sha256:bf83bcdeb98ac20bb813cac291af121d91c5a296fa815e01f93886b4f8b38845"},
+    {file = "cdk_nag-2.37.55.tar.gz", hash = "sha256:e9dc517070ef5a19deef95e79731e5624bd86cd07b56d210380408ea1314e47b"},
 ]
 
 [package.dependencies]
-aws-cdk-lib = ">=2.156.0,<3.0.0"
+aws-cdk-lib = ">=2.176.0,<3.0.0"
 constructs = ">=10.0.5,<11.0.0"
-jsii = ">=1.104.0,<2.0.0"
+jsii = ">=1.116.0,<2.0.0"
 publication = ">=0.0.3"
 typeguard = ">=2.13.3,<4.3.0"
 
