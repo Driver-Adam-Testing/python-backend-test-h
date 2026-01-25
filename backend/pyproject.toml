@@ -10,7 +10,7 @@ python = ">=3.12,<3.13"
 uvicorn = {extras = ["standard"], version = "^0.38.0"}
 fastapi = "^0.118.2"
 python-multipart = "^0.0.20"
-tenacity = "^8.2.3"
+tenacity = "^9.1.2"
 pydantic = ">2.0"
 
 #TODO: Do we need gunicorn?
