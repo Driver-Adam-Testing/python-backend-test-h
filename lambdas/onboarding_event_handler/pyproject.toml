@@ -18,7 +18,7 @@ sentry-sdk = "^2.0.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"
 pytest-asyncio = "^0.23.7"
-moto = {extras = ["all", "ec2", "s3"], version = "^5.0.9"}
+moto = {extras = ["all", "ec2", "s3"], version = "^5.1.20"}
 
 [build-system]
 requires = ["poetry-core"]
