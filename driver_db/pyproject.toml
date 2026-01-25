@@ -16,7 +16,7 @@ pgvector = "^0.2.5"
 strawberry-graphql = { extras = ["fastapi"], version = "^0.262.6" }
 psycopg2-binary = "^2.9.9"
 asyncpg = "^0.29.0"
-sqlalchemy-utils = "^0.41.2"
+sqlalchemy-utils = "^0.42.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
