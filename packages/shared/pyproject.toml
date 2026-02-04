@@ -11,7 +11,7 @@ markdown = "^3.6"
 database = { path = "../../driver_db", develop = true }
 tiktoken = "^0.12.0"
 anthropic = "^0.31.2"
-boto3 = "^1.34.149"
+boto3 = "^1.42.41"
 pymupdf = "^1.24.9"
 tabula-py = "^2.9.3"
 rank-bm25 = "^0.2.2"
