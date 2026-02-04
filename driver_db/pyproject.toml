@@ -10,7 +10,7 @@ python = ">=3.12,<3.13"
 alembic = "^1.12.1"
 sqlmodel = "^0.0.21"
 pydantic-settings = "^2.2.1"
-pgvector = "^0.2.5"
+pgvector = "^0.4.2"
 
 #TODO: Remove strawberry-graphql from here when we migrate schemas or transition legacy.
 strawberry-graphql = { extras = ["fastapi"], version = "^0.262.6" }
