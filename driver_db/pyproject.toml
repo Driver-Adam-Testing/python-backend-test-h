@@ -13,7 +13,7 @@ pydantic-settings = "^2.2.1"
 pgvector = "^0.2.5"
 
 #TODO: Remove strawberry-graphql from here when we migrate schemas or transition legacy.
-strawberry-graphql = { extras = ["fastapi"], version = "^0.262.6" }
+strawberry-graphql = { extras = ["fastapi"], version = "^0.291.0" }
 psycopg2-binary = "^2.9.9"
 asyncpg = "^0.29.0"
 sqlalchemy-utils = "^0.41.2"
