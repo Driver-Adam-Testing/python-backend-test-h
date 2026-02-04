@@ -18,7 +18,7 @@ rank-bm25 = "^0.2.2"
 openai = "1.99.1"
 modal = "^1.0.4"
 pydantic = {extras = ["email"], version = "^2.11.7"}
-auth0-python = "^4.7.1"
+auth0-python = "^5.0.0"
 httpx = "^0.28.1"
 
 
