@@ -12,7 +12,7 @@ database = { path = "../../driver_db", develop = true }
 tiktoken = "^0.12.0"
 anthropic = "^0.31.2"
 boto3 = "^1.34.149"
-pymupdf = "^1.24.9"
+pymupdf = "^1.27.1"
 tabula-py = "^2.9.3"
 rank-bm25 = "^0.2.2"
 openai = "1.99.1"
