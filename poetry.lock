@@ -213,20 +213,20 @@ files = [
 
 [[package]]
 name = "constructs"
-version = "10.4.2"
+version = "10.5.0"
 description = "A programming model for software-defined state"
 optional = false
-python-versions = "~=3.8"
+python-versions = "~=3.9"
 groups = ["main"]
 files = [
-    {file = "constructs-10.4.2-py3-none-any.whl", hash = "sha256:1f0f59b004edebfde0f826340698b8c34611f57848139b7954904c61645f13c1"},
-    {file = "constructs-10.4.2.tar.gz", hash = "sha256:ce54724360fffe10bab27d8a081844eb81f5ace7d7c62c84b719c49f164d5307"},
+    {file = "constructs-10.5.0-py3-none-any.whl", hash = "sha256:01e613161f087f0432c24824a1ba4e8a3084f5af4c7fcd852c8e94bfc0110ab5"},
+    {file = "constructs-10.5.0.tar.gz", hash = "sha256:88d23b10361c0a8b4896f6bed66693a0f4c61f0aa4247eb33a34a4ed12e67aaf"},
 ]
 
 [package.dependencies]
-jsii = ">=1.102.0,<2.0.0"
+jsii = ">=1.126.0,<2.0.0"
 publication = ">=0.0.3"
-typeguard = ">=2.13.3,<2.14.0"
+typeguard = "2.13.3"
 
 [[package]]
 name = "coverage"
@@ -415,14 +415,14 @@ files = [
 
 [[package]]
 name = "jsii"
-version = "1.119.0"
+version = "1.126.0"
 description = "Python client for jsii runtime"
 optional = false
 python-versions = "~=3.9"
 groups = ["main"]
 files = [
-    {file = "jsii-1.119.0-py3-none-any.whl", hash = "sha256:9203200ed5289ecc6198783513cbd7abef53d4f6eac0046181d647fa56eda6ab"},
-    {file = "jsii-1.119.0.tar.gz", hash = "sha256:9f87508908bfa51dd9aac59fdbbeff347ae76377758ea5e5f83f149052211514"},
+    {file = "jsii-1.126.0-py3-none-any.whl", hash = "sha256:0bb3d5423fd62a499f9ce83e98668b48424ac6ef39472bff90cdf4650aa41b41"},
+    {file = "jsii-1.126.0.tar.gz", hash = "sha256:5e4739843aab3af25472490a05a271cf7d53f01a6d46167ab0f1f2cff3a8df95"},
 ]
 
 [package.dependencies]
@@ -431,7 +431,7 @@ cattrs = ">=1.8,<25.4"
 importlib_resources = ">=5.2.0"
 publication = ">=0.0.3"
 python-dateutil = "*"
-typeguard = ">=2.13.3,<4.5.0"
+typeguard = "2.13.3"
 typing_extensions = ">=3.8,<5.0"
 
 [[package]]
