@@ -34,7 +34,7 @@ pyjwt = "^2.10.1"
 sentry-sdk = { version = "^2.22.0", extras = ["fastapi"] }
 cachetools = "^6.0.0"
 httpx = "^0.28.1"
-disposable-email-domains = "^0.0.132"
+disposable-email-domains = "^0.0.161"
 truststore = "^0.10.4"
 hatchet-sdk = "^1.21.5"
 fastmcp = "^2.13.3"
