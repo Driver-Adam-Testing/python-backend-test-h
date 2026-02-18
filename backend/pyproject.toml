@@ -23,7 +23,7 @@ database = { path = "../driver_db", develop = true }
 shared = { path = "../packages/shared", develop = true }
 strawberry-graphql = { extras = ["fastapi"], version = "^0.262.6" }
 auth0-python = "^4.7.1"
-boto3 = "^1.34.114"
+boto3 = "^1.42.46"
 moto = "^5.0.9"
 aws-cdk-lib = "^2.144.0"
 constructs = "^10.3.0"
